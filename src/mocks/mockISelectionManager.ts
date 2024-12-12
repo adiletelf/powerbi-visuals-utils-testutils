@@ -55,25 +55,46 @@ export class MockISelectionManager implements ISelectionManager {
     }
 
     public select(selectionId: ISelectionId | ISelectionId[], multiSelect?: boolean): IPromise<ISelectionId[]> {
-        const selectionIds: ISelectionId[] = [].concat(selectionId);
+        const selectionIds: ISelectionId[] = Array.isArray(selectionId) ? selectionId : [selectionId];
 
-        // if no multiselect reset current selection and save new passed selections;
-        if (!multiSelect) {
-            this.selectionIds = selectionIds;
+        if (selectionIds.length < 1) {
+            return new Promise((resolve, reject) => {
+                resolve(this.selectionIds);
+            }) as any;
+        }
+
+        if (selectionIds.length > 1) {
+            // the new selection is a set of points
+            if (multiSelect) {
+                // if multiSelect is truthy, toggle the selection state of each selectionId
+                selectionIds.forEach(id => {
+                    const index = this.selectionIds.findIndex(selectedId => selectedId.equals(id));
+                    if (index > -1) {
+                        this.selectionIds.splice(index, 1);
+                    } else {
+                        this.selectionIds.push(id);
+                    }
+                });
+            } else {
+                // if an array of selectionIds are passed in, assume multiSelect and set the selection to be the new set that is selected
+                this.selectionIds = selectionIds;
+            }
+        } else if (this.containsSelection(selectionIds[0])) {
+            // the selectionId that was selected is a subset of what is already selected
+            if (multiSelect) {
+                // if multiSelect is on, deselect the selected id
+                this.selectionIds = this.selectionIds.filter(x => !selectionIds[0].equals(x));
+            } else {
+                // if multiSelect is off, the selected item is the new selectedId, else deselect the selection
+                this.selectionIds = selectionIds.length > 1 ? selectionIds : [];
+            }
         } else {
-            // if multiselect then check all passed selections
-            selectionIds.forEach( (id: ISelectionId) => {
-                // if selectionManager has passed selection in list of current selections
-                if (this.containsSelection(id)) {
-                    // need to exclude from selection (selection of selected element should deselect element)
-                    this.selectionIds = this.selectionIds.filter((selectedId: ISelectionId) => {
-                        return !selectedId.equals(id);
-                    });
-                } else {
-                    // otherwise include the new selection into current selections
-                    this.selectionIds.push(id);
-                }
-            });
+            // the selectionId that was selected is not a subset of what is already selected
+            if (multiSelect) {
+                this.selectionIds.push(selectionIds[0]);
+            } else {
+                this.selectionIds = selectionIds;
+            }
         }
 
         return new Promise((resolve, reject) => {
