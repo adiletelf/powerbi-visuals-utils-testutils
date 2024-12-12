@@ -133,6 +133,8 @@ export class MockISelectionManager implements ISelectionManager {
     }
 
     public simutateSelection(selections: ISelectionId[]): void {
-        this.callback(selections);
+        if (this.callback && typeof this.callback === "function") {
+            this.callback(selections);
+        }
     }
 }

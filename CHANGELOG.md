@@ -1,5 +1,6 @@
 ## 6.1.2
 * Fix 'select' method to allow deselecting selection
+* Check if 'callback' is defined in MockISelectionManager
 
 ## 6.1.1
 * powerbi-visuals-api update to 5.9.0
