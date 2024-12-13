@@ -57,44 +57,52 @@ export class MockISelectionManager implements ISelectionManager {
     public select(selectionId: ISelectionId | ISelectionId[], multiSelect?: boolean): IPromise<ISelectionId[]> {
         const selectionIds: ISelectionId[] = Array.isArray(selectionId) ? selectionId : [selectionId];
 
-        if (selectionIds.length < 1) {
+        if (selectionIds.length === 0) {
             return new Promise((resolve, reject) => {
                 resolve(this.selectionIds);
             }) as any;
         }
 
-        if (selectionIds.length > 1) {
-            // the new selection is a set of points
+        const handleMultipleSelection = ((selectionIds: ISelectionId[]) => {
             if (multiSelect) {
-                // if multiSelect is truthy, toggle the selection state of each selectionId
+                // add new selection and toggle existing selection
                 selectionIds.forEach(id => {
-                    const index = this.selectionIds.findIndex(selectedId => selectedId.equals(id));
-                    if (index > -1) {
-                        this.selectionIds.splice(index, 1);
+                    const matchingIndex = this.selectionIds.findIndex(selectedId => selectedId.equals(id));
+                    if (matchingIndex > -1) {
+                        this.selectionIds.splice(matchingIndex, 1);
                     } else {
                         this.selectionIds.push(id);
                     }
                 });
             } else {
-                // if an array of selectionIds are passed in, assume multiSelect and set the selection to be the new set that is selected
+                // replace the current selection with the new selection
                 this.selectionIds = selectionIds;
             }
-        } else if (this.containsSelection(selectionIds[0])) {
-            // the selectionId that was selected is a subset of what is already selected
-            if (multiSelect) {
-                // if multiSelect is on, deselect the selected id
-                this.selectionIds = this.selectionIds.filter(x => !selectionIds[0].equals(x));
+        });
+
+        const handleSingleSelection = ((selectionId: ISelectionId) => {
+            const matchingIndex = this.selectionIds.findIndex(selectedId => selectedId.equals(selectionId));
+            if (matchingIndex > -1) {
+                // the selection is already selected, so we need to deselect it
+                if (multiSelect) {
+                    this.selectionIds.splice(matchingIndex, 1);
+                } else {
+                    this.selectionIds = [];
+                }
             } else {
-                // if multiSelect is off, the selected item is the new selectedId, else deselect the selection
-                this.selectionIds = selectionIds.length > 1 ? selectionIds : [];
+                // the selection is off, so we need to select it
+                if (multiSelect) {
+                    this.selectionIds.push(selectionId);
+                } else {
+                    this.selectionIds = [selectionId];
+                }
             }
+        });
+
+        if (selectionIds.length > 1) {
+            handleMultipleSelection(selectionIds);
         } else {
-            // the selectionId that was selected is not a subset of what is already selected
-            if (multiSelect) {
-                this.selectionIds.push(selectionIds[0]);
-            } else {
-                this.selectionIds = selectionIds;
-            }
+            handleSingleSelection(selectionIds[0]);
         }
 
         return new Promise((resolve, reject) => {
@@ -133,7 +141,7 @@ export class MockISelectionManager implements ISelectionManager {
     }
 
     public simutateSelection(selections: ISelectionId[]): void {
-        if (this.callback && typeof this.callback === "function") {
+        if (typeof this.callback === "function") {
             this.callback(selections);
         }
     }

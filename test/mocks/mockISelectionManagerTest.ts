@@ -133,7 +133,7 @@ describe("MockISelectionManager", () => {
 
             const selectedIds: ISelectionId[] = selectionManager.getSelectionIds();
             expect(selectedIds).toHaveSize(1);
-            expect(selectedIds[0].equals(selectionId)).toBeTruthy();
+            expect(selectedIds[0]).toEqual(selectionId);
         });
 
         it("should toggle a selection", () => {
@@ -155,7 +155,7 @@ describe("MockISelectionManager", () => {
 
             const selectedIds: ISelectionId[] = selectionManager.getSelectionIds();
             expect(selectedIds).toHaveSize(1);
-            expect(selectedIds[0].equals(selectionId1)).toBeTruthy();
+            expect(selectedIds[0]).toEqual(selectionId1);
         });
 
         it("should not update the selection when selection array is empty", () => {
@@ -166,7 +166,7 @@ describe("MockISelectionManager", () => {
 
             const selectedIds: ISelectionId[] = selectionManager.getSelectionIds();
             expect(selectedIds).toHaveSize(1);
-            expect(selectedIds[0].equals(selectionId)).toBeTruthy();
+            expect(selectedIds[0]).toEqual(selectionId);
         })
 
         it("should add multiple selections at once", () => {
@@ -178,9 +178,9 @@ describe("MockISelectionManager", () => {
 
             const selectedIds: ISelectionId[] = selectionManager.getSelectionIds();
             expect(selectedIds).toHaveSize(3);
-            expect(selectedIds[0].equals(selectionId0)).toBeTruthy();
-            expect(selectedIds[1].equals(selectionId1)).toBeTruthy();
-            expect(selectedIds[2].equals(selectionId2)).toBeTruthy();
+            expect(selectedIds[0]).toEqual(selectionId0);
+            expect(selectedIds[1]).toEqual(selectionId1);
+            expect(selectedIds[2]).toEqual(selectionId2);
         });
 
         it("should add multiple selections with multiSelection", () => {
@@ -194,9 +194,9 @@ describe("MockISelectionManager", () => {
 
             const selectedIds: ISelectionId[] = selectionManager.getSelectionIds();
             expect(selectedIds).toHaveSize(3);
-            expect(selectedIds[0].equals(selectionId0)).toBeTruthy();
-            expect(selectedIds[1].equals(selectionId1)).toBeTruthy();
-            expect(selectedIds[2].equals(selectionId2)).toBeTruthy();
+            expect(selectedIds[0]).toEqual(selectionId0);
+            expect(selectedIds[1]).toEqual(selectionId1);
+            expect(selectedIds[2]).toEqual(selectionId2);
         });
 
         it("should toggle a selection with multiSelection", () => {
@@ -209,8 +209,8 @@ describe("MockISelectionManager", () => {
 
             const selectedIds: ISelectionId[] = selectionManager.getSelectionIds();
             expect(selectedIds).toHaveSize(2);
-            expect(selectedIds[0].equals(selectionId0)).toBeTruthy();
-            expect(selectedIds[1].equals(selectionId1)).toBeTruthy();
+            expect(selectedIds[0]).toEqual(selectionId0);
+            expect(selectedIds[1]).toEqual(selectionId1);
         });
 
         it("should replace a selection with passed array of selectionIds", () => {
@@ -224,10 +224,10 @@ describe("MockISelectionManager", () => {
 
             const selectedIds: ISelectionId[] = selectionManager.getSelectionIds();
             expect(selectedIds).toHaveSize(2);
-            expect(selectedIds[0].equals(selectionId0)).toBeFalsy();
-            expect(selectedIds[1].equals(selectionId1)).toBeFalsy();
-            expect(selectedIds[0].equals(selectionId2)).toBeTruthy();
-            expect(selectedIds[1].equals(selectionId3)).toBeTruthy();
+            expect(selectedIds[0]).not.toEqual(selectionId0);
+            expect(selectedIds[1]).not.toEqual(selectionId1);
+            expect(selectedIds[0]).toEqual(selectionId2);
+            expect(selectedIds[1]).toEqual(selectionId3);
         });
 
         it("should merge a selection with passed array of selectionIds", () => {
@@ -241,10 +241,10 @@ describe("MockISelectionManager", () => {
 
             const selectedIds: ISelectionId[] = selectionManager.getSelectionIds();
             expect(selectedIds).toHaveSize(4);
-            expect(selectedIds[0].equals(selectionId0)).toBeTruthy();
-            expect(selectedIds[1].equals(selectionId1)).toBeTruthy();
-            expect(selectedIds[2].equals(selectionId2)).toBeTruthy();
-            expect(selectedIds[3].equals(selectionId3)).toBeTruthy();
+            expect(selectedIds[0]).toEqual(selectionId0);
+            expect(selectedIds[1]).toEqual(selectionId1);
+            expect(selectedIds[2]).toEqual(selectionId2);
+            expect(selectedIds[3]).toEqual(selectionId3);
         });
     });
 });

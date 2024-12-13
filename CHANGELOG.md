@@ -1,5 +1,5 @@
 ## 6.1.2
-* Fix 'select' method to allow deselecting selection
+* Fix 'select' method in MockISelectionManager to allow deselecting selection
 * Check if 'callback' is defined in MockISelectionManager
 * Add tests for MockISelectionManager
 
